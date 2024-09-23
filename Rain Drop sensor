@@ -1,0 +1,45 @@
+#define BLYNK_TEMPLATE_ID "TMPL6NOW0lWdW"
+#define BLYNK_TEMPLATE_NAME "Rain detector"
+#define BLYNK_AUTH_TOKEN "R75aIPxrMi7CkrJANy6LYSYPeyt2WxOt"
+
+#define BLYNK_PRINT Serial
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+
+ 
+char auth[] = "R75aIPxrMi7CkrJANy6LYSYPeyt2WxOt";
+
+char ssid[] = "Indyn";  // type your wifi name
+char pass[] = "kuedonat";  // type your wifi password
+ 
+#define RAIN_SENSOR  14
+BlynkTimer timer;
+int flag=0;
+void notifyOnFire()
+{
+  int isButtonPressed = digitalRead(RAIN_SENSOR);
+ 
+  if (isButtonPressed==0 && flag==0) {
+    Serial.println("Its Raining");
+     Blynk.email('@gmail.com', "Alert", "It's Raining");
+     Blynk.logEvent("rain_alert","Its Raining");
+    flag=1;
+  }
+  else if (isButtonPressed==1)
+  {
+    flag=0;
+  }
+}
+
+void setup(){
+  pinMode(14, INPUT);
+  Serial.begin(115200);
+  Blynk.begin("R75aIPxrMi7CkrJANy6LYSYPeyt2WxOt", "Indyn", "kuedonat");
+  //dht.begin();
+  timer.setInterval(2500L, notifyOnFire);
+}
+
+void loop(){
+  Blynk.run();
+  timer.run();
+}
